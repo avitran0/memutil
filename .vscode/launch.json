@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "memutil",
+            "cargo": {
+                "args": ["build", "--bin=memutil", "--package=memutil"],
+                "filter": {
+                    "name": "memutil",
+                    "kind": "bin"
+                }
+            },
+            "args": ["find-function", "self", "process_vm_readv"],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

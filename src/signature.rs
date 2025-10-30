@@ -3,18 +3,24 @@ use std::fmt::Display;
 use crate::memory::{Memory, MemoryError};
 
 #[derive(Debug, Clone)]
-pub enum Signature {
-    Address(usize),
-    Signature(IdaSignature),
+pub enum AddressLocator {
+    Absolute(usize),
+    Pattern(IdaSignature),
     PointerChain(IdaSignature, Vec<usize>),
 }
 
-impl Signature {
+impl AddressLocator {
     pub fn resolve(&self, memory: &Memory) -> Result<usize, MemoryError> {
         match self {
-            Signature::Address(address) => Ok(*address),
-            Signature::Signature(signature) => self.resolve_signature(memory, signature),
-            Signature::PointerChain(signature, pointers) => {
+            AddressLocator::Absolute(address) => {
+                if memory.is_pointer_valid(*address) {
+                    Ok(*address)
+                } else {
+                    Err(MemoryError::InvalidPointer(*address))
+                }
+            }
+            AddressLocator::Pattern(signature) => self.resolve_signature(memory, signature),
+            AddressLocator::PointerChain(signature, pointers) => {
                 let base_address = self.resolve_signature(memory, signature)?;
                 let mut address = base_address;
                 for &offset in pointers {
@@ -49,11 +55,11 @@ impl Signature {
     }
 }
 
-impl Display for Signature {
+impl Display for AddressLocator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Address(address) => write!(f, "0x{address:X}"),
-            Self::Signature(signature) => write!(f, "{signature}"),
+            Self::Absolute(address) => write!(f, "0x{address:X}"),
+            Self::Pattern(signature) => write!(f, "{signature}"),
             Self::PointerChain(signature, pointers) => {
                 let pointer_str = pointers
                     .iter()

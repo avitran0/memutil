@@ -1,8 +1,8 @@
 use std::{thread::sleep, time::Duration};
 
-use crate::{data_type::DataType, memory::Memory, signature::Signature};
+use crate::{data_type::DataType, memory::Memory, signature::AddressLocator};
 
-pub fn watch(pid: i32, signature: Signature, data_type: DataType, interval: Duration) {
+pub fn watch(pid: i32, signature: AddressLocator, data_type: DataType, interval: Duration) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
         Err(e) => {

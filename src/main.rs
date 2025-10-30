@@ -22,16 +22,19 @@ fn main() {
     match args.command {
         Commands::Read {
             pid,
-            signature,
+            address: signature,
             data_type,
         } => read_once(pid, signature, data_type),
         Commands::Watch {
             pid,
-            signature,
+            address: signature,
             data_type,
             interval,
         } => watch(pid, signature, data_type, interval),
-        Commands::Find { pid, signature } => find(pid, signature),
+        Commands::Find {
+            pid,
+            address: signature,
+        } => find(pid, signature),
         Commands::FindFunction { pid, function_name } => find_function(pid, function_name),
         Commands::List { pid } => list(pid),
     }

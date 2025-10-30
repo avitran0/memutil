@@ -1,6 +1,6 @@
-use crate::{memory::Memory, signature::Signature};
+use crate::{memory::Memory, signature::AddressLocator};
 
-pub fn find(pid: i32, signature: Signature) {
+pub fn find(pid: i32, signature: AddressLocator) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
         Err(e) => {

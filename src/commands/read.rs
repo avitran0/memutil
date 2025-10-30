@@ -1,6 +1,6 @@
-use crate::{data_type::DataType, memory::Memory, signature::Signature};
+use crate::{data_type::DataType, memory::Memory, signature::AddressLocator};
 
-pub fn read_once(pid: i32, signature: Signature, data_type: DataType) {
+pub fn read_once(pid: i32, signature: AddressLocator, data_type: DataType) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
         Err(e) => {
@@ -16,7 +16,7 @@ pub fn read_once(pid: i32, signature: Signature, data_type: DataType) {
             return;
         }
     };
-    
+
     let value = match data_type.read(&memory, address) {
         Ok(value) => value,
         Err(e) => {

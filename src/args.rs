@@ -2,7 +2,7 @@ use std::{num::ParseIntError, time::Duration};
 
 use crate::{
     data_type::DataType,
-    signature::{IdaSignature, Offset, Signature},
+    signature::{AddressLocator, IdaSignature, Offset},
 };
 
 #[derive(Debug, clap::Parser)]
@@ -16,27 +16,27 @@ pub enum Commands {
     Read {
         #[clap(value_parser=parse_pid)]
         pid: i32,
-        #[clap(value_parser=parse_signature)]
-        signature: Signature,
+        #[clap(value_parser=parse_address_locator)]
+        address: AddressLocator,
         #[clap(value_parser=parse_data_type)]
         data_type: DataType,
     },
     Watch {
         #[clap(value_parser=parse_pid)]
         pid: i32,
-        #[clap(value_parser=parse_signature)]
-        signature: Signature,
+        #[clap(value_parser=parse_address_locator)]
+        address: AddressLocator,
         #[clap(value_parser=parse_data_type)]
         data_type: DataType,
         #[clap(value_parser=parse_duration)]
-        #[arg(default_value = "1s")]
+        #[arg(short, long, default_value = "1s")]
         interval: Duration,
     },
     Find {
         #[clap(value_parser=parse_pid)]
         pid: i32,
-        #[clap(value_parser=parse_signature)]
-        signature: Signature,
+        #[clap(value_parser=parse_address_locator)]
+        address: AddressLocator,
     },
     FindFunction {
         #[clap(value_parser=parse_pid)]
@@ -65,12 +65,12 @@ fn parse_pid(s: &str) -> Result<i32, String> {
     }
 }
 
-fn parse_signature(s: &str) -> Result<Signature, String> {
+fn parse_address_locator(s: &str) -> Result<AddressLocator, String> {
     // basic address
     if let Some(stripped) = s.strip_prefix("0x").or_else(|| s.strip_prefix("0X")) {
         let addr =
             usize::from_str_radix(stripped, 16).map_err(|e| format!("Invalid hex address: {e}"))?;
-        return Ok(Signature::Address(addr));
+        return Ok(AddressLocator::Absolute(addr));
     }
 
     // split into potential pattern and pointer chain parts
@@ -83,9 +83,9 @@ fn parse_signature(s: &str) -> Result<Signature, String> {
             parts[1..].iter().map(|&ptr| parse_pointer(ptr)).collect();
 
         let pointers = pointers.map_err(|e| format!("Invalid pointer: {e}"))?;
-        Ok(Signature::PointerChain(pattern, pointers))
+        Ok(AddressLocator::PointerChain(pattern, pointers))
     } else {
-        Ok(Signature::Signature(pattern))
+        Ok(AddressLocator::Pattern(pattern))
     }
 }
 
@@ -173,10 +173,13 @@ fn parse_data_type(s: &str) -> Result<DataType, String> {
 }
 
 fn parse_duration(s: &str) -> Result<Duration, String> {
-    if let Some(ms) = s.strip_suffix("ms") {
+    if let Some(us) = s.strip_suffix("us") {
+        let us = us.parse::<u64>().map_err(|e| e.to_string())?;
+        Ok(Duration::from_micros(us))
+    } else if let Some(ms) = s.strip_suffix("ms") {
         let ms = ms.parse::<u64>().map_err(|e| e.to_string())?;
         Ok(Duration::from_millis(ms))
-    } else if let Some(s) = s.strip_suffix("s") {
+    } else if let Some(s) = s.strip_suffix('s') {
         let s = s.parse::<u64>().map_err(|e| e.to_string())?;
         Ok(Duration::from_secs(s))
     } else {

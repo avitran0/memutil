@@ -12,15 +12,15 @@ pub enum MemoryError {
     SignatureNotFound(IdaSignature),
     #[error("Invalid ELF Signature '{0:X}'")]
     InvalidElf(u32),
-    #[error("Invalid ELF File: {0}")]
+    #[error("Invalid ELF File ({0})")]
     InvalidElfData(#[from] elf::ParseError),
-    #[error("Invalid Address: {0}")]
+    #[error("Invalid Address ({0})")]
     InvalidAddress(#[from] std::num::ParseIntError),
-    #[error("Invalid Pointer: 0x{0:X}")]
+    #[error("Invalid Pointer 0x{0:X}")]
     InvalidPointer(usize),
     #[error("Parial read: {0} out of {1} bytes")]
     PartialRead(isize, usize),
-    #[error("I/O Error: {0}")]
+    #[error("I/O Error ({0})")]
     Io(#[from] std::io::Error),
 }
 
@@ -136,7 +136,7 @@ impl Memory {
 
     fn read_memory_regions(pid: i32) -> Result<Vec<MemoryRegion>, MemoryError> {
         let maps_file_name = format!("/proc/{pid}/maps");
-        let maps_file = std::fs::read_to_string(maps_file_name).unwrap();
+        let maps_file = std::fs::read_to_string(maps_file_name)?;
 
         let mut region_map = BTreeMap::new();
         for line in maps_file.lines() {

@@ -87,14 +87,11 @@ impl Memory {
 
     pub fn scan_signature(&self, signature: &IdaSignature) -> Result<Option<usize>, MemoryError> {
         for region in &self.memory_regions {
-            if region.pathname.starts_with('[') {
+            if region.pathname.starts_with('[') || region.pathname.starts_with("/dev") {
                 continue;
             }
 
-            let start = std::time::Instant::now();
             let address = self.scan_signature_in_region(signature, region)?;
-            let end = std::time::Instant::now();
-            dbg!(end - start);
             if let Some(address) = address {
                 return Ok(Some(address));
             }
@@ -140,7 +137,7 @@ impl Memory {
 
         let mut region_map = BTreeMap::new();
         for line in maps_file.lines() {
-            let parts: Vec<&str> = line.split_whitespace().collect();
+            let parts: Vec<&str> = line.splitn(6, ' ').collect();
             if parts.len() < 2 {
                 continue;
             }
@@ -158,8 +155,8 @@ impl Memory {
                 usize::from_str_radix(range_parts[1], 16).map_err(MemoryError::InvalidAddress)?;
 
             // Get pathname (last field)
-            let pathname = if parts.len() >= 6 {
-                parts[5].to_string()
+            let pathname = if parts.len() >= 6 && !parts[5].is_empty() {
+                parts[5].trim().to_string()
             } else {
                 "[anonymous]".to_string()
             };

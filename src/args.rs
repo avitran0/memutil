@@ -2,7 +2,7 @@ use std::{num::ParseIntError, time::Duration};
 
 use crate::{
     data_type::DataType,
-    signature::{AddressLocator, IdaSignature, Offset},
+    address::{AddressLocator, IdaSignature, Offset},
 };
 
 #[derive(Debug, clap::Parser)]

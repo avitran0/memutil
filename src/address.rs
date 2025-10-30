@@ -22,15 +22,23 @@ impl AddressLocator {
             AddressLocator::Pattern(signature) => self.resolve_signature(memory, signature),
             AddressLocator::PointerChain(signature, pointers) => {
                 let base_address = self.resolve_signature(memory, signature)?;
+
+                if pointers.is_empty() {
+                    return Ok(base_address);
+                }
+
                 let mut address = base_address;
-                for &offset in pointers {
+                let (deref_pointers, final_offset) = pointers.split_at(pointers.len() - 1);
+
+                for &offset in deref_pointers {
                     let new_address: usize = memory.read(address + offset)?;
                     if !memory.is_pointer_valid(new_address) {
                         return Err(MemoryError::InvalidPointer(new_address));
                     }
                     address = new_address;
                 }
-                Ok(address)
+                
+                Ok(address + final_offset[0])
             }
         }
     }

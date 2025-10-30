@@ -1,4 +1,4 @@
-use crate::{data_type::DataType, memory::Memory, signature::AddressLocator};
+use crate::{data_type::DataType, memory::Memory, address::AddressLocator};
 
 pub fn read_once(pid: i32, addresss: AddressLocator, data_type: DataType) {
     let memory = match Memory::new(pid) {

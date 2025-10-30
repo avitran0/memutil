@@ -4,7 +4,7 @@ use elf::{ElfBytes, endian::AnyEndian, symbol::Symbol};
 use libc::{iovec, process_vm_readv};
 use thiserror::Error;
 
-use crate::signature::IdaSignature;
+use crate::address::IdaSignature;
 
 #[derive(Debug, Error)]
 pub enum MemoryError {

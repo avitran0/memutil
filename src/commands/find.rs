@@ -1,4 +1,4 @@
-use crate::{memory::Memory, signature::AddressLocator};
+use crate::{memory::Memory, address::AddressLocator};
 
 pub fn find(pid: i32, address: AddressLocator) {
     let memory = match Memory::new(pid) {

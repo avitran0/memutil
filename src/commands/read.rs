@@ -1,6 +1,6 @@
 use crate::{data_type::DataType, memory::Memory, signature::AddressLocator};
 
-pub fn read_once(pid: i32, signature: AddressLocator, data_type: DataType) {
+pub fn read_once(pid: i32, addresss: AddressLocator, data_type: DataType) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
         Err(e) => {
@@ -9,7 +9,7 @@ pub fn read_once(pid: i32, signature: AddressLocator, data_type: DataType) {
         }
     };
 
-    let address = match signature.resolve(&memory) {
+    let address = match addresss.resolve(&memory) {
         Ok(address) => address,
         Err(e) => {
             eprintln!("Unable to resolve address: {e}");

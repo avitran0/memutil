@@ -1,6 +1,6 @@
 use crate::{memory::Memory, signature::AddressLocator};
 
-pub fn find(pid: i32, signature: AddressLocator) {
+pub fn find(pid: i32, address: AddressLocator) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
         Err(e) => {
@@ -9,7 +9,7 @@ pub fn find(pid: i32, signature: AddressLocator) {
         }
     };
 
-    let address = match signature.resolve(&memory) {
+    let address = match address.resolve(&memory) {
         Ok(address) => address,
         Err(e) => {
             eprintln!("Unable to resolve address: {e}");

@@ -2,7 +2,7 @@ use std::{thread::sleep, time::Duration};
 
 use crate::{data_type::DataType, memory::Memory, signature::AddressLocator};
 
-pub fn watch(pid: i32, signature: AddressLocator, data_type: DataType, interval: Duration) {
+pub fn watch(pid: i32, address: AddressLocator, data_type: DataType, interval: Duration) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
         Err(e) => {
@@ -12,7 +12,7 @@ pub fn watch(pid: i32, signature: AddressLocator, data_type: DataType, interval:
     };
 
     loop {
-        let address = match signature.resolve(&memory) {
+        let address = match address.resolve(&memory) {
             Ok(address) => address,
             Err(e) => {
                 eprintln!("Unable to resolve address: {e}");

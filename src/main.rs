@@ -10,11 +10,11 @@ use crate::{
     },
 };
 
+mod address;
 mod args;
 mod commands;
 mod data_type;
 mod memory;
-mod address;
 mod value;
 
 fn main() {

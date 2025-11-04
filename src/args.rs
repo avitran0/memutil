@@ -1,8 +1,8 @@
-use std::{num::ParseIntError, time::Duration};
+use std::{num::ParseIntError, path::PathBuf, time::Duration};
 
 use crate::{
-    data_type::DataType,
     address::{AddressLocator, IdaSignature, Offset},
+    data_type::DataType,
 };
 
 #[derive(Debug, clap::Parser)]
@@ -54,15 +54,47 @@ fn parse_pid(s: &str) -> Result<i32, String> {
         return Ok(std::process::id() as i32);
     }
 
-    let pid = s
-        .parse::<i32>()
-        .map_err(|e: ParseIntError| format!("Invalid PID '{s}': {e}"))?;
-
-    if pid <= 0 || pid > 2_i32.pow(22) {
-        Err(format!("Invalid PID '{s}'"))
-    } else {
-        Ok(pid)
+    // pid is a number
+    if let Ok(pid) = s.parse::<i32>() {
+        return if pid <= 0 || pid > 2_i32.pow(22) {
+            Err(format!("Invalid PID '{s}'"))
+        } else {
+            Ok(pid)
+        };
     }
+
+    // pid is an executable name
+    for process in std::fs::read_dir("/proc").map_err(|e| format!("Could not read /proc: {e}"))? {
+        let Ok(process) = process else {
+            continue;
+        };
+
+        if !process.file_type().unwrap().is_dir() {
+            continue;
+        }
+
+        let dir_name = process.file_name();
+        let mut exe_path = PathBuf::from("/proc");
+        exe_path.push(&dir_name);
+        exe_path.push("exe");
+
+        let Ok(exe_path) = std::fs::read_link(exe_path) else {
+            continue;
+        };
+
+        if let Some(exe) = exe_path.file_name()
+            && exe == s
+        {
+            let pid = dir_name
+                .to_str()
+                .ok_or(format!("Invalid PID in path '{exe:?}'"))?;
+            let pid = pid
+                .parse()
+                .map_err(|e| format!("Invalid PID '{pid}': {e}"))?;
+            return Ok(pid);
+        }
+    }
+    Ok(0)
 }
 
 fn parse_address_locator(s: &str) -> Result<AddressLocator, String> {

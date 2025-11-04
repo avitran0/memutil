@@ -12,7 +12,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["find-function", "self", "process_vm_readv"],
+            "args": ["find-function", "cs2", "process_vm_readv"],
             "cwd": "${workspaceFolder}"
         }
     ]

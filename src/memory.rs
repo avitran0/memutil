@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, path::Path};
 
 use elf::{ElfBytes, endian::AnyEndian, symbol::Symbol};
 use libc::{iovec, process_vm_readv};
@@ -87,7 +87,8 @@ impl Memory {
 
     pub fn scan_signature(&self, signature: &IdaSignature) -> Result<Option<usize>, MemoryError> {
         for region in &self.memory_regions {
-            if region.pathname.starts_with('[') || region.pathname.starts_with("/dev") {
+            let path = Path::new(&region.pathname);
+            if !path.exists() || !path.is_file() {
                 continue;
             }
 
@@ -224,7 +225,8 @@ impl Memory {
 
         for region in &self.memory_regions {
             let file_name = &region.pathname;
-            if !file_name.starts_with('/') {
+            let path = Path::new(file_name);
+            if !path.exists() || !path.is_file() {
                 continue;
             }
             let data = std::fs::read(file_name)?;

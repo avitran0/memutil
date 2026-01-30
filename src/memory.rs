@@ -230,6 +230,9 @@ impl Memory {
                 continue;
             }
             let data = std::fs::read(file_name)?;
+            if !data.starts_with(&[0x7F, b'E', b'L', b'F']) {
+                continue;
+            }
             let elf = ElfBytes::<AnyEndian>::minimal_parse(&data)?;
             let common_data = elf.find_common_data()?;
             let (dynsyms, dynstr) = match (common_data.dynsyms, common_data.dynsyms_strs) {

@@ -1,4 +1,4 @@
-use glam::{Mat4, Quat, Vec2, Vec3, Vec4, vec2, vec3, vec4};
+use glam::{Mat4, Quat, vec2, vec3, vec4};
 
 use crate::{
     address::AddressLocator,
@@ -109,7 +109,7 @@ fn test_pointer_reads() -> Result<(), MemoryError> {
 
 #[test]
 fn test_vector_reads() -> Result<(), MemoryError> {
-    let v2 = Vec2::new(1.0, -2.5);
+    let v2 = vec2(1.0, -2.5);
     let v3 = vec3(0.25, 4.0, -8.0);
     let v4 = vec4(1.0, 2.0, 3.0, 4.0);
 

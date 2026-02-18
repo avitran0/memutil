@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use glam::{Mat4, Vec2, Vec3, Vec4};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Value {
     U8(u8),
     U16(u16),

@@ -3,7 +3,7 @@ use crate::{
     value::Value,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum DataType {
     U8,
     U16,

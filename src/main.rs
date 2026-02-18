@@ -15,6 +15,8 @@ mod args;
 mod commands;
 mod data_type;
 mod memory;
+#[cfg(test)]
+mod tests;
 mod value;
 
 fn main() {

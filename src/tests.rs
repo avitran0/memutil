@@ -12,7 +12,7 @@ fn pid() -> i32 {
 }
 
 fn address<T>(value: &T) -> usize {
-    &raw const value as usize
+    value as *const T as usize
 }
 
 fn read(address: AddressLocator, data_type: DataType) -> Result<Value, MemoryError> {

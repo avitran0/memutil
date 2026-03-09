@@ -37,7 +37,7 @@ impl AddressLocator {
                     }
                     address = new_address;
                 }
-                
+
                 Ok(address + final_offset[0])
             }
         }
@@ -71,7 +71,7 @@ impl Display for AddressLocator {
             Self::PointerChain(signature, pointers) => {
                 let pointer_str = pointers
                     .iter()
-                    .map(|pointer| format!("{pointer:X}"))
+                    .map(|pointer| format!("0x{pointer:X}"))
                     .collect::<Vec<_>>()
                     .join(" -> ");
                 write!(f, "{signature} {pointer_str}")

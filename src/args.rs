@@ -47,6 +47,11 @@ pub enum Commands {
         #[clap(value_parser=parse_pid)]
         pid: i32,
     },
+    Snap {
+        #[clap(value_parser=parse_pid)]
+        pid: i32,
+        lib: String,
+    },
 }
 
 fn parse_pid(s: &str) -> Result<i32, String> {

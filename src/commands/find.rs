@@ -1,18 +1,18 @@
-use crate::{memory::Memory, address::AddressLocator};
+use crate::{address::AddressLocator, memory::Memory};
 
 pub fn find(pid: i32, address: AddressLocator) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
-        Err(e) => {
-            eprintln!("Unable to open process memory: {e}");
+        Err(err) => {
+            eprintln!("Unable to open process memory: {err}");
             return;
         }
     };
 
     let address = match address.resolve(&memory) {
         Ok(address) => address,
-        Err(e) => {
-            eprintln!("Unable to resolve address: {e}");
+        Err(err) => {
+            eprintln!("Unable to resolve address: {err}");
             return;
         }
     };
@@ -34,16 +34,16 @@ pub fn find(pid: i32, address: AddressLocator) {
 pub fn find_function(pid: i32, function_name: String) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
-        Err(e) => {
-            eprintln!("Unable to open process memory: {e}");
+        Err(err) => {
+            eprintln!("Unable to open process memory: {err}");
             return;
         }
     };
 
     let functions = match memory.find_function(&function_name) {
         Ok(functions) => functions,
-        Err(e) => {
-            eprintln!("Unable to find function '{function_name}': {e}");
+        Err(err) => {
+            eprintln!("Unable to find function '{function_name}': {err}");
             return;
         }
     };

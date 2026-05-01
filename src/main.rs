@@ -3,10 +3,7 @@ use clap::Parser as _;
 use crate::{
     args::{Args, Commands},
     commands::{
-        find::{find, find_function},
-        list::list,
-        read::read_once,
-        watch::watch,
+        find::{find, find_function}, list::list, read::read_once, snap::snap, watch::watch
     },
 };
 
@@ -36,5 +33,6 @@ fn main() {
         Commands::Find { pid, address } => find(pid, address),
         Commands::FindFunction { pid, function_name } => find_function(pid, function_name),
         Commands::List { pid } => list(pid),
+        Commands::Snap { pid, lib } => snap(pid, lib),
     }
 }

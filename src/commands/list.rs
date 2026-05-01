@@ -3,8 +3,8 @@ use crate::memory::Memory;
 pub fn list(pid: i32) {
     let memory = match Memory::new(pid) {
         Ok(memory) => memory,
-        Err(e) => {
-            eprintln!("Unable to open process memory: {e}");
+        Err(err) => {
+            eprintln!("Unable to open process memory: {err}");
             return;
         }
     };
